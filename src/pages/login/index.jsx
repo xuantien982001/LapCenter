@@ -39,9 +39,12 @@ const Login = () => {
         })
             .then(function (response) {
                 console.log(response);
+                console.log('userName',response.data.userName);
                 navigate('/')
                 setLoading(false)
-                localStorage.setItem('name','Tien')
+                localStorage.setItem('name',response.data.userName)
+                localStorage.setItem('userId',response.data.userId)
+                localStorage.setItem('isAdmin',response.data.isAdmin)
 
             })
             .catch(function (error) {

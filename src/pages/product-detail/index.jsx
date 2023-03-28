@@ -7,6 +7,8 @@ import Loader from "../../components/loader";
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import BrandCard from "../../components/brand-card";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProducDetail = () => {
     const [data, setData] = useState()
@@ -15,6 +17,7 @@ const ProducDetail = () => {
     const [loading, setLoading] = useState(false)
     const [thumbnail, setThumbnail] = useState()
     const [listDataBrand, setListDataBrand] = useState()
+    const [isDisableAddCart, setIsDisableAddCart] = useState(false)
     const responsive = {
         superLargeDesktop: {
             // the naming can be any, depends on you.
@@ -52,6 +55,47 @@ const ProducDetail = () => {
             })
     }
 
+    const handleAddProductToCard = () => {
+        setIsDisableAddCart(true)
+        axios.post('https://lapcenter-v1.onrender.com/api/cart/addProductToCart', {
+            userId: localStorage.getItem('userId'),
+            productId: data?._id,
+            productName: data?.name,
+            productBrand: data?.brand,
+            image: data?.images[0],
+            price: data?.price,
+        })
+            .then(function (response) {
+                console.log(response);
+                setIsDisableAddCart(false)
+                toast.success( `Thêm ${data?.name} giỏ hàng thành công!`, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+                setIsDisableAddCart(false)
+                toast.error('Thêm thất bại thất bại!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    });
+
+            });
+    }
+
 
     const fetchAPI = () => {
         setLoading(true)
@@ -73,7 +117,7 @@ const ProducDetail = () => {
         // fetchAPI()
         fetchAPI()
         handleSearching()
-        window.scroll(0,0)//cuộn lên đầu
+        window.scroll(0, 0)//cuộn lên đầu
     }, [state.id])//Khi 1 trong nhiều giá trị trong mảng đc truyền vào thy đổi thì hàm useEffect sẽ chạy lại
     //truyền value vào string: dùng dấu ``, trước value thêm $
     return (
@@ -120,10 +164,25 @@ const ProducDetail = () => {
                                 <p >Thông tin quà tặng</p>
                             </div>
                             <div className="flex justify-center my-4">
-                                <div className="w-[110px] p-2 bg-slate-300 rounded-lg hover:bg-slate-600 cursor-pointer" onClick={() => navigate('/buy', { state : { productInfo : data }})}>
+                                <div className="w-[110px] p-2 bg-slate-300 rounded-lg hover:bg-slate-600 cursor-pointer" onClick={() => navigate('/buy', { state: { productInfo: data }})}>
                                     <p className="text-lg text-center text-slate-100">Mua ngay</p>
                                 </div>
                             </div>
+
+                            {localStorage.getItem('name') && (
+                                <div className={`w-[180px] p-2  bg-slate-300 rounded-lg hover:bg-slate-600 cursor-pointer ${
+                                    isDisableAddCart ? 'cursor-not-allowed' : 'cursor-pointer'
+                                  }`}
+                                    onClick={!isDisableAddCart && handleAddProductToCard}
+                                >
+                                    {/* <div onClick={!isDisableAddCart && handleAddProductToCard} className="w-[180px] p-2 bg-slate-300 rounded-lg hover:bg-slate-600 cursor-pointer"> */}
+                                        <div >
+
+                                            <p className="text-lg text-center text-slate-100">Thêm vào giỏ hàng</p>
+                                        </div>
+                                    {/* </div> */}
+                                </div>
+                            )}
                             <div className="flex justify-center">
                                 <span className="mt-[2px]"> Gọi</span>
                                 <span className="mx-2 text-lg font-semibold text-red-500">111111</span>

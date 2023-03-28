@@ -8,8 +8,11 @@ import ProducDetail from './pages/product-detail'
 import Register from './pages/register'
 import PageNoteFound from './pages/pageNotFound'
 import Buy from './pages/buy'
+import MyCart from './pages/my-cart'
+import Orders from './pages/orders'
 function App() {
   const name = localStorage.getItem('name')
+  const isAdmin = localStorage.getItem('isAdmin')
   return (
     <BrowserRouter>
       <Routes>
@@ -17,6 +20,14 @@ function App() {
         <Route path="/intro" element={<Intro />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/buy" element={<Buy />} />
+        <Route path="/orders" element={<Orders />} />
+        {/* <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} /> */}
+        {localStorage.getItem('name') && <Route path="/my-cart" element={<MyCart />} />}
+        {isAdmin === 'true' && 
+          <Route path="/orders" element={<Orders />} />
+
+        }
 
         {!name && (
           <>
